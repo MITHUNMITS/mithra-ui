@@ -1,0 +1,43 @@
+{
+  "name": "@mithra-ui/web",
+  "version": "0.1.0",
+  "description": "Zero-config, framework-independent Web Components UI library.",
+  "type": "module",
+  "license": "MIT",
+  "author": "Mithra UI",
+  "homepage": "https://github.com/mithra-ui/mithra-ui#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mithra-ui/mithra-ui.git",
+    "directory": "packages/web"
+  },
+  "bugs": {
+    "url": "https://github.com/mithra-ui/mithra-ui/issues"
+  },
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "main": "./dist/mithra-ui-web.umd.cjs",
+  "module": "./dist/mithra-ui-web.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/mithra-ui-web.js",
+      "require": "./dist/mithra-ui-web.umd.cjs"
+    },
+    "./theme.css": "./dist/theme.css"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "build": "vite build",
+    "typecheck": "tsc --noEmit",
+    "preview": "vite preview --host 127.0.0.1"
+  },
+  "peerDependencies": {},
+  "dependencies": {},
+  "devDependencies": {}
+}

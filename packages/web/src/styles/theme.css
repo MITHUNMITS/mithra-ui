@@ -1,0 +1,93 @@
+:host,
+:root {
+  color-scheme: light;
+
+  --m-color-background: #ffffff;
+  --m-color-surface: #f8fafc;
+  --m-color-surface-elevated: #ffffff;
+  --m-color-text: #0f172a;
+  --m-color-text-muted: #475569;
+  --m-color-border: #cbd5e1;
+  --m-color-primary: #2563eb;
+  --m-color-primary-contrast: #ffffff;
+  --m-color-focus-ring: #3b82f6;
+
+  --m-font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --m-font-size-sm: 0.875rem;
+  --m-font-size-md: 1rem;
+  --m-font-size-lg: 1.125rem;
+  --m-line-height: 1.5;
+
+  --m-space-1: 0.25rem;
+  --m-space-2: 0.5rem;
+  --m-space-3: 0.75rem;
+  --m-space-4: 1rem;
+  --m-space-6: 1.5rem;
+  --m-space-8: 2rem;
+
+  --m-radius-sm: 0.25rem;
+  --m-radius-md: 0.5rem;
+  --m-radius-lg: 0.75rem;
+
+  --m-shadow-sm: 0 1px 2px rgb(15 23 42 / 0.08);
+  --m-shadow-md: 0 8px 24px rgb(15 23 42 / 0.12);
+
+  --m-duration-fast: 120ms;
+  --m-duration-normal: 200ms;
+  --m-easing-standard: cubic-bezier(0.2, 0, 0, 1);
+}
+
+:root[data-theme="dark"],
+.m-theme-dark {
+  color-scheme: dark;
+
+  --m-color-background: #020617;
+  --m-color-surface: #0f172a;
+  --m-color-surface-elevated: #111827;
+  --m-color-text: #f8fafc;
+  --m-color-text-muted: #cbd5e1;
+  --m-color-border: #334155;
+  --m-color-primary: #60a5fa;
+  --m-color-primary-contrast: #0f172a;
+  --m-color-focus-ring: #93c5fd;
+
+  --m-shadow-sm: 0 1px 2px rgb(0 0 0 / 0.35);
+  --m-shadow-md: 0 12px 32px rgb(0 0 0 / 0.45);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+
+    --m-color-background: #020617;
+    --m-color-surface: #0f172a;
+    --m-color-surface-elevated: #111827;
+    --m-color-text: #f8fafc;
+    --m-color-text-muted: #cbd5e1;
+    --m-color-border: #334155;
+    --m-color-primary: #60a5fa;
+    --m-color-primary-contrast: #0f172a;
+    --m-color-focus-ring: #93c5fd;
+
+    --m-shadow-sm: 0 1px 2px rgb(0 0 0 / 0.35);
+    --m-shadow-md: 0 12px 32px rgb(0 0 0 / 0.45);
+  }
+}
+
+:root[dir="rtl"],
+[dir="rtl"] {
+  --m-direction: rtl;
+}
+
+:root[dir="ltr"],
+[dir="ltr"] {
+  --m-direction: ltr;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :host,
+  :root {
+    --m-duration-fast: 0ms;
+    --m-duration-normal: 0ms;
+  }
+}

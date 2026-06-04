@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mithra UI HTML Example</title>
+    <link rel="stylesheet" href="../../packages/web/dist/theme.css" />
+    <style>
+      body {
+        min-height: 100vh;
+        margin: 0;
+        background: var(--m-color-background);
+        color: var(--m-color-text);
+        font-family: var(--m-font-family);
+        line-height: var(--m-line-height);
+      }
+
+      main {
+        width: min(920px, calc(100% - 32px));
+        margin: 0 auto;
+        padding: var(--m-space-8) 0;
+      }
+
+      .panel {
+        border: 1px solid var(--m-color-border);
+        border-radius: var(--m-radius-lg);
+        background: var(--m-color-surface-elevated);
+        box-shadow: var(--m-shadow-md);
+        padding: var(--m-space-6);
+      }
+
+      .panel + .panel {
+        margin-top: var(--m-space-6);
+      }
+
+      .actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--m-space-3);
+        margin-top: var(--m-space-4);
+      }
+
+      button {
+        border: 1px solid var(--m-color-border);
+        border-radius: var(--m-radius-md);
+        background: var(--m-color-surface);
+        color: var(--m-color-text);
+        cursor: pointer;
+        font: inherit;
+        padding: var(--m-space-2) var(--m-space-4);
+        transition:
+          background-color var(--m-duration-normal) var(--m-easing-standard),
+          color var(--m-duration-normal) var(--m-easing-standard),
+          border-color var(--m-duration-normal) var(--m-easing-standard);
+      }
+
+      button:focus-visible {
+        outline: 3px solid var(--m-color-focus-ring);
+        outline-offset: 2px;
+      }
+
+      .grid {
+        display: grid;
+        gap: var(--m-space-3);
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        margin-top: var(--m-space-4);
+      }
+
+      .stack {
+        display: grid;
+        gap: var(--m-space-3);
+        margin-top: var(--m-space-4);
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <section class="panel" aria-labelledby="title">
+        <h1 id="title">Mithra UI</h1>
+        <p>
+          This demo imports the built package, registers native Web Components,
+          and uses the global theme tokens.
+        </p>
+        <div class="actions" aria-label="Theme controls">
+          <button type="button" data-theme="light">Light</button>
+          <button type="button" data-theme="dark">Dark</button>
+          <button type="button" data-theme="system">System</button>
+          <button type="button" data-direction="rtl">RTL</button>
+          <button type="button" data-direction="ltr">LTR</button>
+        </div>
+      </section>
+
+      <section class="panel" aria-labelledby="button-variants">
+        <h2 id="button-variants">Button Variants</h2>
+        <div class="grid">
+          <m-button>Save</m-button>
+          <m-button variant="secondary">Cancel</m-button>
+          <m-button variant="success">Approve</m-button>
+          <m-button variant="warning">Review</m-button>
+          <m-button variant="danger">Delete</m-button>
+          <m-button variant="ghost">Ghost</m-button>
+          <m-button variant="outline">Outline</m-button>
+          <m-button variant="link">Read more</m-button>
+        </div>
+      </section>
+
+      <section class="panel" aria-labelledby="button-states">
+        <h2 id="button-states">Button States</h2>
+        <div class="grid">
+          <m-button state="idle">Idle</m-button>
+          <m-button loading>Loading attr</m-button>
+          <m-button state="loading">Load</m-button>
+          <m-button state="saving">Save</m-button>
+          <m-button state="success" success-text="Created">Create</m-button>
+          <m-button state="error" error-text="Retry failed">Retry</m-button>
+          <m-button disabled>Disabled</m-button>
+          <m-button block rounded>Continue</m-button>
+        </div>
+      </section>
+
+      <section class="panel" aria-labelledby="button-sizes">
+        <h2 id="button-sizes">Button Sizes</h2>
+        <div class="actions">
+          <m-button size="sm">Small</m-button>
+          <m-button size="md">Medium</m-button>
+          <m-button size="lg">Large</m-button>
+        </div>
+        <form class="stack" action="#" method="get">
+          <m-button type="submit">Submit form</m-button>
+          <m-button type="reset" variant="secondary">Reset form</m-button>
+        </form>
+      </section>
+    </main>
+
+    <script type="module">
+      import { applyTheme, register } from "../../packages/web/dist/mithra-ui-web.js";
+
+      register();
+
+      document.querySelectorAll("[data-theme]").forEach((button) => {
+        button.addEventListener("click", () => {
+          applyTheme({ theme: button.dataset.theme });
+        });
+      });
+
+      document.querySelectorAll("[data-direction]").forEach((button) => {
+        button.addEventListener("click", () => {
+          applyTheme({ direction: button.dataset.direction });
+        });
+      });
+    </script>
+  </body>
+</html>
