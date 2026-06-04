@@ -3,151 +3,2366 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Mithra UI HTML Example</title>
+    <title>Mithra UI — Prime Web Components Documentation</title>
     <link rel="stylesheet" href="../../packages/web/dist/theme.css" />
     <style>
-      body {
-        min-height: 100vh;
+      @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap');
+
+      * {
+        box-sizing: border-box;
         margin: 0;
+        padding: 0;
+      }
+
+      :root {
+        --doc-sidebar-width: 280px;
+        --doc-header-height: 64px;
+      }
+
+      body {
         background: var(--m-color-background);
         color: var(--m-color-text);
-        font-family: var(--m-font-family);
-        line-height: var(--m-line-height);
-      }
-
-      main {
-        width: min(920px, calc(100% - 32px));
-        margin: 0 auto;
-        padding: var(--m-space-8) 0;
-      }
-
-      .panel {
-        border: 1px solid var(--m-color-border);
-        border-radius: var(--m-radius-lg);
-        background: var(--m-color-surface-elevated);
-        box-shadow: var(--m-shadow-md);
-        padding: var(--m-space-6);
-      }
-
-      .panel + .panel {
-        margin-top: var(--m-space-6);
-      }
-
-      .actions {
+        font-family: 'Inter', var(--m-font-family);
+        min-height: 100vh;
         display: flex;
-        flex-wrap: wrap;
-        gap: var(--m-space-3);
-        margin-top: var(--m-space-4);
+        flex-direction: column;
+        overflow: hidden;
+        transition: background-color var(--m-duration-normal) var(--m-easing-standard);
       }
 
-      button {
+      /* PrimeNG-Style Header */
+      .doc-header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: var(--doc-header-height);
+        background: color-mix(in srgb, var(--m-color-surface-elevated) 85%, transparent);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border-bottom: 1px solid var(--m-color-border);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 24px;
+        z-index: 100;
+      }
+
+      .logo-group {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-weight: 800;
+        font-size: 18px;
+        letter-spacing: -0.02em;
+        color: var(--m-color-text);
+        text-decoration: none;
+      }
+
+      .badge {
+        background: var(--m-color-surface);
+        border: 1px solid var(--m-color-border);
+        color: var(--m-color-text-muted);
+        font-size: 11px;
+        padding: 2px 8px;
+        border-radius: 9999px;
+        font-weight: 600;
+      }
+
+      /* Search Navigation */
+      .search-wrapper {
+        position: relative;
+        max-width: 260px;
+        width: 100%;
+      }
+
+      .search-input {
+        width: 100%;
+        padding: 8px 12px 8px 36px;
+        border-radius: var(--m-radius-md);
+        border: 1px solid var(--m-color-border);
+        background: var(--m-color-surface);
+        color: var(--m-color-text);
+        font-family: inherit;
+        font-size: 14px;
+        outline: none;
+        transition: border-color var(--m-duration-fast) var(--m-easing-standard);
+      }
+
+      .search-input:focus {
+        border-color: var(--m-color-primary);
+        box-shadow: 0 0 0 3px var(--m-color-focus-ring);
+      }
+
+      .search-icon {
+        position: absolute;
+        left: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--m-color-text-muted);
+        pointer-events: none;
+      }
+
+      /* Header Actions */
+      .header-actions {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .theme-btn {
         border: 1px solid var(--m-color-border);
         border-radius: var(--m-radius-md);
         background: var(--m-color-surface);
         color: var(--m-color-text);
         cursor: pointer;
-        font: inherit;
-        padding: var(--m-space-2) var(--m-space-4);
-        transition:
-          background-color var(--m-duration-normal) var(--m-easing-standard),
-          color var(--m-duration-normal) var(--m-easing-standard),
-          border-color var(--m-duration-normal) var(--m-easing-standard);
+        padding: 8px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        transition: all var(--m-duration-fast);
       }
 
-      button:focus-visible {
-        outline: 3px solid var(--m-color-focus-ring);
-        outline-offset: 2px;
+      .theme-btn:hover {
+        background: var(--m-color-surface-elevated);
+        border-color: var(--m-color-text-muted);
       }
 
-      .grid {
+      .mobile-menu-toggle {
+        display: none;
+      }
+
+      /* Container Layout */
+      .doc-container {
+        display: flex;
+        flex: 1;
+        margin-top: var(--doc-header-height);
+        height: calc(100vh - var(--doc-header-height));
+        overflow: hidden;
+      }
+
+      .sidebar-backdrop {
+        display: none;
+        position: fixed;
+        top: var(--doc-header-height);
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(2, 6, 23, 0.4);
+        backdrop-filter: blur(4px);
+        z-index: 80;
+      }
+
+      /* Sidebar Menu */
+      .doc-sidebar {
+        width: var(--doc-sidebar-width);
+        border-right: 1px solid var(--m-color-border);
+        background: var(--m-color-surface);
+        padding: 24px;
+        overflow-y: auto;
+        flex-shrink: 0;
+      }
+
+      .sidebar-section {
+        margin-bottom: 24px;
+      }
+
+      .sidebar-heading {
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--m-color-text-muted);
+        font-weight: 700;
+        margin-bottom: 12px;
+      }
+
+      .sidebar-nav {
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+
+      .sidebar-nav a {
+        display: block;
+        padding: 8px 12px;
+        border-radius: var(--m-radius-md);
+        color: var(--m-color-text-muted);
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 500;
+        transition: all var(--m-duration-fast);
+      }
+
+      .sidebar-nav a:hover {
+        color: var(--m-color-text);
+        background: var(--m-color-surface-elevated);
+      }
+
+      .sidebar-nav a.active {
+        color: var(--m-color-primary-contrast);
+        background: var(--m-color-primary);
+      }
+
+      /* Main Panel content */
+      .doc-content {
+        flex: 1;
+        overflow-y: auto;
+        padding: 40px;
+        background: var(--m-color-background);
+      }
+
+      .doc-section {
+        display: none;
+        max-width: 960px;
+        width: 100%;
+        margin: 0 auto;
+        animation: fadeIn 250ms var(--m-easing-standard);
+      }
+
+      .doc-section.active {
+        display: block;
+      }
+
+      @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(8px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+
+      /* Typography & Page Header */
+      .component-header {
+        margin-bottom: 28px;
+      }
+
+      .component-title {
+        font-size: 38px;
+        font-weight: 800;
+        letter-spacing: -0.03em;
+        color: var(--m-color-text);
+        margin-bottom: 8px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .component-desc {
+        font-size: 16px;
+        line-height: 1.6;
+        color: var(--m-color-text-muted);
+        max-width: 760px;
+      }
+
+      /* PrimeNG TabMenu Menu Bar */
+      .doc-tabmenu {
+        border-bottom: 1px solid var(--m-color-border);
+        margin-bottom: 28px;
+        display: flex;
+        gap: 8px;
+      }
+
+      .doc-tabmenu-btn {
+        background: none;
+        border: none;
+        border-bottom: 2px solid transparent;
+        color: var(--m-color-text-muted);
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 600;
+        padding: 12px 18px;
+        margin-bottom: -1px;
+        transition: all var(--m-duration-fast);
+        outline: none;
+      }
+
+      .doc-tabmenu-btn:hover {
+        color: var(--m-color-text);
+        border-bottom-color: var(--m-color-border);
+      }
+
+      .doc-tabmenu-btn.active {
+        color: var(--m-color-primary);
+        border-bottom-color: var(--m-color-primary);
+      }
+
+      .doc-tabpanel {
+        display: none;
+      }
+
+      .doc-tabpanel.active {
+        display: block;
+      }
+
+      /* PrimeNG-Style Demo Cards */
+      .card-demo {
+        border: 1px solid var(--m-color-border);
+        border-radius: var(--m-radius-lg);
+        background: var(--m-color-surface-elevated);
+        margin-bottom: 28px;
+        overflow: hidden;
+        box-shadow: var(--m-shadow-sm);
+      }
+
+      .card-demo-header {
+        padding: 16px 20px;
+        background: var(--m-color-surface);
+        border-bottom: 1px solid var(--m-color-border);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .card-demo-title {
+        font-size: 15px;
+        font-weight: 700;
+        color: var(--m-color-text);
+      }
+
+      .card-demo-preview {
+        padding: 32px 24px;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 16px;
+        background: var(--m-color-background);
+      }
+
+      .card-demo-actions {
+        background: var(--m-color-surface);
+        border-top: 1px solid var(--m-color-border);
+        padding: 8px 16px;
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+      }
+
+      .card-demo-source {
+        display: none;
+        border-top: 1px solid var(--m-color-border);
+      }
+
+      .card-demo-source.active {
+        display: block;
+      }
+
+      /* Code Styling */
+      .code-block {
+        background: #0f172a;
+        padding: 16px 20px;
+        overflow-x: auto;
+        position: relative;
+        border: none;
+      }
+
+      .code-block pre {
+        margin: 0;
+        font-family: 'Fira Code', monospace;
+        font-size: 13px;
+        color: #cbd5e1;
+        line-height: 1.5;
+      }
+
+      .code-block .copy-btn,
+      .copy-code-btn {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        color: #f8fafc;
+        border-radius: var(--m-radius-md);
+        padding: 6px 12px;
+        font-size: 12px;
+        cursor: pointer;
+        transition: all var(--m-duration-fast);
+        outline: none;
+      }
+
+      .code-block .copy-btn:hover,
+      .copy-code-btn:hover {
+        background: rgba(255, 255, 255, 0.18);
+        border-color: rgba(255, 255, 255, 0.3);
+      }
+
+      code.inline {
+        font-family: 'Fira Code', monospace;
+        font-size: 13px;
+        background: var(--m-color-surface);
+        border: 1px solid var(--m-color-border);
+        padding: 2px 6px;
+        border-radius: var(--m-radius-sm);
+        color: var(--m-color-primary);
+      }
+
+      /* Playgrounds */
+      .playground {
+        border: 1px solid var(--m-color-border);
+        border-radius: var(--m-radius-lg);
+        overflow: hidden;
+        margin: 24px 0;
+        background: var(--m-color-surface-elevated);
+        box-shadow: var(--m-shadow-sm);
+      }
+
+      .playground-preview {
+        padding: 48px 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: radial-gradient(circle, var(--m-color-surface) 0%, var(--m-color-background) 100%);
+        border-bottom: 1px solid var(--m-color-border);
+        min-height: 180px;
+        position: relative;
+        overflow: auto;
+      }
+
+      .playground-controls {
+        padding: 24px;
+        background: var(--m-color-surface);
+        border-bottom: 1px solid var(--m-color-border);
         display: grid;
-        gap: var(--m-space-3);
-        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-        margin-top: var(--m-space-4);
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 16px;
       }
 
-      .stack {
+      .control-group {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      .control-group label {
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--m-color-text-muted);
+      }
+
+      .control-group input[type="text"],
+      .control-group select {
+        padding: 8px 12px;
+        border-radius: var(--m-radius-md);
+        border: 1px solid var(--m-color-border);
+        background: var(--m-color-surface-elevated);
+        color: var(--m-color-text);
+        font-family: inherit;
+        font-size: 14px;
+        outline: none;
+        transition: border-color var(--m-duration-fast);
+      }
+
+      .control-group input[type="text"]:focus,
+      .control-group select:focus {
+        border-color: var(--m-color-primary);
+      }
+
+      .control-group-checkbox {
+        flex-direction: row;
+        align-items: center;
+        gap: 8px;
+        padding-top: 14px;
+      }
+
+      .control-group-checkbox label {
+        order: 2;
+        cursor: pointer;
+      }
+
+      .control-group-checkbox input {
+        order: 1;
+        cursor: pointer;
+        width: 16px;
+        height: 16px;
+        accent-color: var(--m-color-primary);
+      }
+
+      .playground-code {
+        position: relative;
+        background: #0f172a;
+        padding: 16px;
+        overflow-x: auto;
+      }
+
+      .playground-code pre {
+        margin: 0;
+        font-family: 'Fira Code', monospace;
+        font-size: 13px;
+        color: #94a3b8;
+        white-space: pre-wrap;
+      }
+
+      /* PrimeNG-Style Tables */
+      .api-table-wrapper {
+        overflow-x: auto;
+        margin: 20px 0;
+        border: 1px solid var(--m-color-border);
+        border-radius: var(--m-radius-lg);
+        box-shadow: var(--m-shadow-sm);
+      }
+
+      .api-table {
+        width: 100%;
+        border-collapse: collapse;
+        text-align: left;
+        font-size: 14px;
+        background: var(--m-color-surface-elevated);
+      }
+
+      .api-table th {
+        background: var(--m-color-surface);
+        padding: 14px 18px;
+        font-weight: 700;
+        border-bottom: 1px solid var(--m-color-border);
+        color: var(--m-color-text);
+      }
+
+      .api-table td {
+        padding: 14px 18px;
+        border-bottom: 1px solid var(--m-color-border);
+        vertical-align: middle;
+      }
+
+      .api-table tr:last-child td {
+        border-bottom: none;
+      }
+
+      .api-badge {
+        display: inline-block;
+        padding: 2px 8px;
+        font-size: 12px;
+        border-radius: var(--m-radius-sm);
+        background: var(--m-color-surface);
+        border: 1px solid var(--m-color-border);
+        font-family: 'Fira Code', monospace;
+      }
+
+      .api-badge.type {
+        background: color-mix(in srgb, var(--m-color-primary) 10%, transparent);
+        border-color: color-mix(in srgb, var(--m-color-primary) 30%, transparent);
+        color: var(--m-color-primary);
+        font-weight: 500;
+      }
+
+      /* Disclosure panel / Types listing */
+      .disclosure-card {
+        border: 1px solid var(--m-color-border);
+        border-radius: var(--m-radius-lg);
+        background: var(--m-color-surface);
+        padding: 16px;
+        margin-top: 16px;
+      }
+
+      .disclosure-title {
+        font-size: 13px;
+        font-weight: 700;
+        text-transform: uppercase;
+        color: var(--m-color-text-muted);
+        letter-spacing: 0.05em;
+        margin-bottom: 12px;
+      }
+
+      /* Toast Notification */
+      .toast {
+        position: fixed;
+        bottom: 24px;
+        right: 24px;
+        background: #0f172a;
+        color: #f8fafc;
+        padding: 12px 20px;
+        border-radius: var(--m-radius-md);
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+        transform: translateY(100px);
+        opacity: 0;
+        transition: transform var(--m-duration-normal) var(--m-easing-standard), opacity var(--m-duration-normal);
+        z-index: 1000;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 14px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .toast.show {
+        transform: translateY(0);
+        opacity: 1;
+      }
+
+      /* Theme Customizer Card */
+      .theme-customizer-card {
+        border: 1px solid var(--m-color-border);
+        border-radius: var(--m-radius-lg);
+        background: var(--m-color-surface-elevated);
+        padding: 24px;
+        margin: 24px 0;
         display: grid;
-        gap: var(--m-space-3);
-        margin-top: var(--m-space-4);
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 20px;
+        box-shadow: var(--m-shadow-sm);
+      }
+
+      .color-picker-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .color-picker-wrapper input[type="color"] {
+        -webkit-appearance: none;
+        border: none;
+        width: 44px;
+        height: 44px;
+        border-radius: var(--m-radius-md);
+        cursor: pointer;
+        background: transparent;
+      }
+
+      .color-picker-wrapper input[type="color"]::-webkit-color-swatch-wrapper {
+        padding: 0;
+      }
+
+      .color-picker-wrapper input[type="color"]::-webkit-color-swatch {
+        border: 1px solid var(--m-color-border);
+        border-radius: var(--m-radius-md);
+      }
+
+      /* Icon catalogues */
+      .icon-showcase-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+        gap: 12px;
+        margin: 24px 0;
+      }
+
+      .icon-showcase-item {
+        border: 1px solid var(--m-color-border);
+        border-radius: var(--m-radius-md);
+        background: var(--m-color-surface-elevated);
+        padding: 16px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+        transition: all var(--m-duration-fast);
+      }
+
+      .icon-showcase-item:hover {
+        border-color: var(--m-color-primary);
+        transform: translateY(-2px);
+        box-shadow: var(--m-shadow-sm);
+        background: var(--m-color-surface);
+      }
+
+      .icon-showcase-name {
+        font-size: 11px;
+        color: var(--m-color-text-muted);
+        word-break: break-all;
+        text-align: center;
+        font-weight: 500;
+      }
+
+      /* Responsive menu */
+      @media (max-width: 768px) {
+        .mobile-menu-toggle {
+          display: inline-flex;
+        }
+
+        .search-wrapper {
+          display: none;
+        }
+
+        .doc-sidebar {
+          position: fixed;
+          top: var(--doc-header-height);
+          bottom: 0;
+          left: 0;
+          z-index: 90;
+          transform: translateX(-100%);
+          transition: transform var(--m-duration-normal) var(--m-easing-standard);
+          background: var(--m-color-surface-elevated);
+          box-shadow: var(--m-shadow-md);
+        }
+
+        .doc-sidebar.active {
+          transform: translateX(0);
+        }
+
+        .doc-content {
+          padding: 24px 16px;
+        }
       }
     </style>
   </head>
   <body>
-    <main>
-      <section class="panel" aria-labelledby="title">
-        <h1 id="title">Mithra UI</h1>
-        <p>
-          This demo imports the built package, registers native Web Components,
-          and uses the global theme tokens.
-        </p>
-        <div class="actions" aria-label="Theme controls">
-          <button type="button" data-theme="light">Light</button>
-          <button type="button" data-theme="dark">Dark</button>
-          <button type="button" data-theme="system">System</button>
-          <button type="button" data-direction="rtl">RTL</button>
-          <button type="button" data-direction="ltr">LTR</button>
-        </div>
-      </section>
 
-      <section class="panel" aria-labelledby="button-variants">
-        <h2 id="button-variants">Button Variants</h2>
-        <div class="grid">
-          <m-button>Save</m-button>
-          <m-button variant="secondary">Cancel</m-button>
-          <m-button variant="success">Approve</m-button>
-          <m-button variant="warning">Review</m-button>
-          <m-button variant="danger">Delete</m-button>
-          <m-button variant="ghost">Ghost</m-button>
-          <m-button variant="outline">Outline</m-button>
-          <m-button variant="link">Read more</m-button>
-        </div>
-      </section>
+    <!-- Toast Notification -->
+    <div id="toast" class="toast">
+      <m-icon name="check" size="sm" color="success"></m-icon>
+      <span id="toast-message">Copied to clipboard!</span>
+    </div>
 
-      <section class="panel" aria-labelledby="button-states">
-        <h2 id="button-states">Button States</h2>
-        <div class="grid">
-          <m-button state="idle">Idle</m-button>
-          <m-button loading>Loading attr</m-button>
-          <m-button state="loading">Load</m-button>
-          <m-button state="saving">Save</m-button>
-          <m-button state="success" success-text="Created">Create</m-button>
-          <m-button state="error" error-text="Retry failed">Retry</m-button>
-          <m-button disabled>Disabled</m-button>
-          <m-button block rounded>Continue</m-button>
-        </div>
-      </section>
+    <!-- Backdrop overlay -->
+    <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
 
-      <section class="panel" aria-labelledby="button-sizes">
-        <h2 id="button-sizes">Button Sizes</h2>
-        <div class="actions">
-          <m-button size="sm">Small</m-button>
-          <m-button size="md">Medium</m-button>
-          <m-button size="lg">Large</m-button>
-        </div>
-        <form class="stack" action="#" method="get">
-          <m-button type="submit">Submit form</m-button>
-          <m-button type="reset" variant="secondary">Reset form</m-button>
-        </form>
-      </section>
-    </main>
+    <!-- Top Header -->
+    <header class="doc-header">
+      <div class="logo-group">
+        <button type="button" class="theme-btn mobile-menu-toggle" id="btn-mobile-menu" aria-label="Toggle Navigation">
+          <m-icon name="menu-2" size="sm"></m-icon>
+        </button>
+        <a href="#introduction" class="brand">
+          <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" style="width: 28px; height: 28px;">
+            <defs>
+              <linearGradient id="mithra-logo-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#3b82f6" />
+                <stop offset="50%" stop-color="#8b5cf6" />
+                <stop offset="100%" stop-color="#ec4899" />
+              </linearGradient>
+            </defs>
+            <rect width="32" height="32" rx="8" fill="url(#mithra-logo-grad)" />
+            <path d="M8 21V11L16 16.5L25 11V21" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+            <circle cx="16" cy="22" r="2.5" fill="white" />
+          </svg>
+          Mithra UI
+        </a>
+        <span class="badge">v0.1.0</span>
+      </div>
 
+      <div class="search-wrapper">
+        <span class="search-icon">
+          <m-icon name="search" size="sm" color="muted"></m-icon>
+        </span>
+        <input type="text" class="search-input" id="search-input" placeholder="Search components..." aria-label="Search docs" />
+      </div>
+
+      <div class="header-actions">
+        <button type="button" class="theme-btn" id="btn-theme-toggle" title="Toggle Light/Dark Theme">
+          <m-icon name="sun" size="sm"></m-icon>
+        </button>
+        <button type="button" class="theme-btn" id="btn-dir-toggle" title="Toggle RTL/LTR">
+          <span style="font-size: 11px; font-weight: 700; width: 20px; text-align: center;">RTL</span>
+        </button>
+        <a href="https://github.com/mithra-ui/mithra-ui" target="_blank" rel="noopener noreferrer" class="theme-btn" title="GitHub Repository">
+          <m-icon name="brand-github" size="sm"></m-icon>
+        </a>
+      </div>
+    </header>
+
+    <div class="doc-container">
+      <!-- Sidebar Navigation Menu -->
+      <aside class="doc-sidebar" id="doc-sidebar">
+        <nav class="sidebar-section">
+          <h2 class="sidebar-heading">General</h2>
+          <ul class="sidebar-nav">
+            <li><a href="#introduction">Introduction</a></li>
+            <li><a href="#installation">Installation</a></li>
+            <li><a href="#customization">Theming</a></li>
+          </ul>
+        </nav>
+
+        <nav class="sidebar-section">
+          <h2 class="sidebar-heading">Components</h2>
+          <ul class="sidebar-nav">
+            <li><a href="#m-button">Button</a></li>
+            <li><a href="#m-text">Text & Typography</a></li>
+            <li><a href="#m-icon">Icon</a></li>
+          </ul>
+        </nav>
+      </aside>
+
+      <!-- Main Contents -->
+      <main class="doc-content" id="doc-content">
+
+        <!-- Introduction Panel -->
+        <section id="introduction" class="doc-section active">
+          <div class="component-header">
+            <h1 class="component-title">Introduction</h1>
+            <p class="component-desc">
+              Mithra UI is a collection of framework-independent custom elements styled dynamically with HSL tokens. Build faster, responsive, accessible web layouts.
+            </p>
+          </div>
+
+          <div class="card-demo">
+            <div class="card-demo-header">
+              <span class="card-demo-title">Why Mithra UI?</span>
+            </div>
+            <div class="card-demo-preview" style="flex-direction: column; align-items: flex-start; gap: 16px;">
+              <p>
+                <strong>Native Web Components:</strong> Rendered under Shadow DOM contexts ensuring total encapsulated stylesheets. No bleed-in of external styles.
+              </p>
+              <p>
+                <strong>Zero Tooling Dependencies:</strong> Works cleanly inside raw HTML files, statically served sites, React, Svelte, Vue, or Angular without compiling wrappers.
+              </p>
+              <p>
+                <strong>Modern CSS Properties:</strong> Configured to use a unified theme configuration that updates layout margins, surface colors, typography scales instantly.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Installation Panel -->
+        <section id="installation" class="doc-section">
+          <div class="component-header">
+            <h1 class="component-title">Installation</h1>
+            <p class="component-desc">Quickly configure Mithra UI web components in your project pipeline.</p>
+          </div>
+
+          <div class="card-demo">
+            <div class="card-demo-header">
+              <span class="card-demo-title">NPM CLI Installation</span>
+            </div>
+            <div class="code-block">
+              <button class="copy-btn" data-copy="npm install @mithra-ui/web">Copy</button>
+              <pre><code>npm install @mithra-ui/web</code></pre>
+            </div>
+          </div>
+
+          <div class="card-demo">
+            <div class="card-demo-header">
+              <span class="card-demo-title">Setup / Register Web Components</span>
+            </div>
+            <div class="code-block">
+              <button class="copy-btn" data-copy='import { register } from "@mithra-ui/web";
+import "@mithra-ui/web/theme.css";
+
+// Register custom elements (m-button, m-text, m-icon, etc.)
+register();'>Copy</button>
+              <pre><code>import { register } from "@mithra-ui/web";
+import "@mithra-ui/web/theme.css";
+
+// Register custom elements (m-button, m-text, m-icon, etc.)
+register();</code></pre>
+            </div>
+          </div>
+        </section>
+
+        <!-- Theming Panel -->
+        <section id="customization" class="doc-section">
+          <div class="component-header">
+            <h1 class="component-title">Theming</h1>
+            <p class="component-desc">granular design parameters to control surface colors, space metrics, borders, and animations.</p>
+          </div>
+
+          <div class="card-demo">
+            <div class="card-demo-header">
+              <span class="card-demo-title">Visual CSS Tokens Override</span>
+            </div>
+            <div class="card-demo-preview" style="flex-direction: column; align-items: stretch;">
+              <p>Adjust variables below to customize design styles in real time across the entire site.</p>
+              
+              <div class="theme-customizer-card">
+                <div class="control-group">
+                  <label for="theme-primary">Primary Accent</label>
+                  <div class="color-picker-wrapper">
+                    <input type="color" id="theme-primary" value="#2563eb" />
+                    <code class="inline" id="val-primary">#2563eb</code>
+                  </div>
+                </div>
+
+                <div class="control-group">
+                  <label for="theme-bg">Background Color</label>
+                  <div class="color-picker-wrapper">
+                    <input type="color" id="theme-bg" value="#ffffff" />
+                    <code class="inline" id="val-bg">#ffffff</code>
+                  </div>
+                </div>
+
+                <div class="control-group">
+                  <label for="theme-surface">Surface Color</label>
+                  <div class="color-picker-wrapper">
+                    <input type="color" id="theme-surface" value="#f8fafc" />
+                    <code class="inline" id="val-surface">#f8fafc</code>
+                  </div>
+                </div>
+
+                <div class="control-group">
+                  <label for="theme-text">Text Color</label>
+                  <div class="color-picker-wrapper">
+                    <input type="color" id="theme-text" value="#0f172a" />
+                    <code class="inline" id="val-text">#0f172a</code>
+                  </div>
+                </div>
+
+                <div class="control-group">
+                  <label for="theme-border">Border Color</label>
+                  <div class="color-picker-wrapper">
+                    <input type="color" id="theme-border" value="#cbd5e1" />
+                    <code class="inline" id="val-border">#cbd5e1</code>
+                  </div>
+                </div>
+
+                <div class="control-group">
+                  <label for="theme-radius">Border Radius (Large)</label>
+                  <div style="display: flex; align-items: center; gap: 8px;">
+                    <input type="range" id="theme-radius" min="0" max="24" value="12" style="flex: 1; accent-color: var(--m-color-primary);" />
+                    <code class="inline" id="val-radius" style="min-width: 44px; text-align: center;">12px</code>
+                  </div>
+                </div>
+              </div>
+
+              <div style="text-align: right;">
+                <m-button variant="danger" rounded id="btn-theme-reset">Reset CSS Tokens</m-button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Button Section -->
+        <section id="m-button" class="doc-section">
+          <div class="component-header">
+            <h1 class="component-title">Button</h1>
+            <p class="component-desc">An interactive component utilized to trigger actions, process forms, or redirect viewports.</p>
+          </div>
+
+          <!-- Tab Bar -->
+          <div class="doc-tabmenu" data-target="m-button">
+            <button class="doc-tabmenu-btn active" data-tab="demo">Features</button>
+            <button class="doc-tabmenu-btn" data-tab="api">API</button>
+            <button class="doc-tabmenu-btn" data-tab="styling">Styling</button>
+          </div>
+
+          <!-- DEMO TAB CONTENT -->
+          <div class="doc-tabpanel active" data-panel="m-button-demo">
+            <!-- Basic Severity Demos -->
+            <div class="card-demo">
+              <div class="card-demo-header">
+                <span class="card-demo-title">Severity / Variants</span>
+              </div>
+              <div class="card-demo-preview">
+                <m-button variant="primary">Primary</m-button>
+                <m-button variant="secondary">Secondary</m-button>
+                <m-button variant="success">Success</m-button>
+                <m-button variant="warning">Warning</m-button>
+                <m-button variant="danger">Danger</m-button>
+                <m-button variant="ghost">Ghost</m-button>
+                <m-button variant="outline">Outline</m-button>
+                <m-button variant="link">Link</m-button>
+              </div>
+              <div class="card-demo-actions">
+                <button class="theme-btn source-toggle" title="View Source"><m-icon name="edit" size="sm"></m-icon></button>
+              </div>
+              <div class="card-demo-source">
+                <div class="code-block">
+                  <button class="copy-btn" data-copy='<m-button variant="primary">Primary</m-button>
+<m-button variant="secondary">Secondary</m-button>
+<m-button variant="success">Success</m-button>
+<m-button variant="warning">Warning</m-button>
+<m-button variant="danger">Danger</m-button>
+<m-button variant="ghost">Ghost</m-button>
+<m-button variant="outline">Outline</m-button>
+<m-button variant="link">Link</m-button>'>Copy</button>
+                  <pre><code>&lt;m-button variant="primary"&gt;Primary&lt;/m-button&gt;
+&lt;m-button variant="secondary"&gt;Secondary&lt;/m-button&gt;
+&lt;m-button variant="success"&gt;Success&lt;/m-button&gt;
+&lt;m-button variant="warning"&gt;Warning&lt;/m-button&gt;
+&lt;m-button variant="danger"&gt;Danger&lt;/m-button&gt;
+&lt;m-button variant="ghost"&gt;Ghost&lt;/m-button&gt;
+&lt;m-button variant="outline"&gt;Outline&lt;/m-button&gt;
+&lt;m-button variant="link"&gt;Link&lt;/m-button&gt;</code></pre>
+                </div>
+              </div>
+            </div>
+
+            <!-- Sizes & Rounded Pill -->
+            <div class="card-demo">
+              <div class="card-demo-header">
+                <span class="card-demo-title">Sizes & Pill Shapes</span>
+              </div>
+              <div class="card-demo-preview">
+                <m-button size="sm">Small</m-button>
+                <m-button size="md">Medium</m-button>
+                <m-button size="lg">Large</m-button>
+                <m-button rounded>Rounded Pill</m-button>
+              </div>
+              <div class="card-demo-actions">
+                <button class="theme-btn source-toggle" title="View Source"><m-icon name="edit" size="sm"></m-icon></button>
+              </div>
+              <div class="card-demo-source">
+                <div class="code-block">
+                  <button class="copy-btn" data-copy='<m-button size="sm">Small</m-button>
+<m-button size="md">Medium</m-button>
+<m-button size="lg">Large</m-button>
+<m-button rounded>Rounded Pill</m-button>'>Copy</button>
+                  <pre><code>&lt;m-button size="sm"&gt;Small&lt;/m-button&gt;
+&lt;m-button size="md"&gt;Medium&lt;/m-button&gt;
+&lt;m-button size="lg"&gt;Large&lt;/m-button&gt;
+&lt;m-button rounded&gt;Rounded Pill&lt;/m-button&gt;</code></pre>
+                </div>
+              </div>
+            </div>
+
+            <!-- Feedback States -->
+            <div class="card-demo">
+              <div class="card-demo-header">
+                <span class="card-demo-title">Feedback / Processing States</span>
+              </div>
+              <div class="card-demo-preview">
+                <m-button state="loading" loading-text="Processing...">Click to load</m-button>
+                <m-button state="saving" saving-text="Deploying...">Save</m-button>
+                <m-button state="success" success-text="Complete">Process</m-button>
+                <m-button state="error" error-text="Retry failed">Verify</m-button>
+                <m-button disabled>Disabled State</m-button>
+              </div>
+              <div class="card-demo-actions">
+                <button class="theme-btn source-toggle" title="View Source"><m-icon name="edit" size="sm"></m-icon></button>
+              </div>
+              <div class="card-demo-source">
+                <div class="code-block">
+                  <button class="copy-btn" data-copy='<m-button state="loading" loading-text="Processing...">Click to load</m-button>
+<m-button state="saving" saving-text="Deploying...">Save</m-button>
+<m-button state="success" success-text="Complete">Process</m-button>
+<m-button state="error" error-text="Retry failed">Verify</m-button>
+<m-button disabled>Disabled State</m-button>'>Copy</button>
+                  <pre><code>&lt;m-button state="loading" loading-text="Processing..."&gt;Click to load&lt;/m-button&gt;
+&lt;m-button state="saving" saving-text="Deploying..."&gt;Save&lt;/m-button&gt;
+&lt;m-button state="success" success-text="Complete"&gt;Process&lt;/m-button&gt;
+&lt;m-button state="error" error-text="Retry failed"&gt;Verify&lt;/m-button&gt;
+&lt;m-button disabled&gt;Disabled State&lt;/m-button&gt;</code></pre>
+                </div>
+              </div>
+            </div>
+
+            <!-- Interactive Playground -->
+            <div class="card-demo">
+              <div class="card-demo-header">
+                <span class="card-demo-title">Interactive Playground</span>
+              </div>
+              <div class="playground">
+                <div class="playground-preview">
+                  <m-button id="btn-preview" variant="primary" size="md">Playground Button</m-button>
+                </div>
+                <div class="playground-controls">
+                  <div class="control-group">
+                    <label for="btn-opt-variant">Variant</label>
+                    <select id="btn-opt-variant">
+                      <option value="primary" selected>primary</option>
+                      <option value="secondary">secondary</option>
+                      <option value="success">success</option>
+                      <option value="warning">warning</option>
+                      <option value="danger">danger</option>
+                      <option value="ghost">ghost</option>
+                      <option value="outline">outline</option>
+                      <option value="link">link</option>
+                    </select>
+                  </div>
+                  <div class="control-group">
+                    <label for="btn-opt-size">Size</label>
+                    <select id="btn-opt-size">
+                      <option value="sm">sm</option>
+                      <option value="md" selected>md</option>
+                      <option value="lg">lg</option>
+                    </select>
+                  </div>
+                  <div class="control-group">
+                    <label for="btn-opt-state">State</label>
+                    <select id="btn-opt-state">
+                      <option value="idle" selected>idle</option>
+                      <option value="loading">loading</option>
+                      <option value="saving">saving</option>
+                      <option value="success">success</option>
+                      <option value="error">error</option>
+                    </select>
+                  </div>
+                  <div class="control-group">
+                    <label for="btn-opt-text">Button Text</label>
+                    <input type="text" id="btn-opt-text" value="Playground Button" />
+                  </div>
+                  <div class="control-group">
+                    <label for="btn-opt-loading-text">Loading Text</label>
+                    <input type="text" id="btn-opt-loading-text" value="Loading..." />
+                  </div>
+                  <div class="control-group">
+                    <label for="btn-opt-success-text">Success Text</label>
+                    <input type="text" id="btn-opt-success-text" value="Saved" />
+                  </div>
+                  <div class="control-group control-group-checkbox">
+                    <input type="checkbox" id="btn-opt-disabled" />
+                    <label for="btn-opt-disabled">Disabled</label>
+                  </div>
+                  <div class="control-group control-group-checkbox">
+                    <input type="checkbox" id="btn-opt-rounded" />
+                    <label for="btn-opt-rounded">Rounded</label>
+                  </div>
+                  <div class="control-group control-group-checkbox">
+                    <input type="checkbox" id="btn-opt-block" />
+                    <label for="btn-opt-block">Block Width</label>
+                  </div>
+                </div>
+                <div class="playground-code">
+                  <button type="button" class="copy-code-btn" id="btn-copy-code">Copy HTML</button>
+                  <pre><code id="btn-markup-code">&lt;m-button variant="primary" size="md"&gt;Playground Button&lt;/m-button&gt;</code></pre>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- API TAB CONTENT -->
+          <div class="doc-tabpanel" data-panel="m-button-api">
+            <div class="card-demo">
+              <div class="card-demo-header">
+                <span class="card-demo-title">Import Statement</span>
+              </div>
+              <div class="code-block">
+                <button class="copy-btn" data-copy='import { MButton } from "@mithra-ui/web";'>Copy</button>
+                <pre><code>import { MButton } from "@mithra-ui/web";</code></pre>
+              </div>
+            </div>
+
+            <h3>Properties</h3>
+            <div class="api-table-wrapper">
+              <table class="api-table">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Type</th>
+                    <th>Default</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><code class="inline">variant</code></td>
+                    <td><span class="api-badge type">MButtonVariant</span></td>
+                    <td><code class="inline">'primary'</code></td>
+                    <td>Defines style weight of the element.</td>
+                  </tr>
+                  <tr>
+                    <td><code class="inline">size</code></td>
+                    <td><span class="api-badge type">MButtonSize</span></td>
+                    <td><code class="inline">'md'</code></td>
+                    <td>Alters padding dimensions.</td>
+                  </tr>
+                  <tr>
+                    <td><code class="inline">state</code></td>
+                    <td><span class="api-badge type">MButtonState</span></td>
+                    <td><code class="inline">'idle'</code></td>
+                    <td>Triggers intermediate state icon replacements.</td>
+                  </tr>
+                  <tr>
+                    <td><code class="inline">disabled</code></td>
+                    <td><span class="api-badge type">boolean</span></td>
+                    <td><code class="inline">false</code></td>
+                    <td>Cancels trigger execution.</td>
+                  </tr>
+                  <tr>
+                    <td><code class="inline">rounded</code></td>
+                    <td><span class="api-badge type">boolean</span></td>
+                    <td><code class="inline">false</code></td>
+                    <td>Pill outline shape.</td>
+                  </tr>
+                  <tr>
+                    <td><code class="inline">block</code></td>
+                    <td><span class="api-badge type">boolean</span></td>
+                    <td><code class="inline">false</code></td>
+                    <td>Forces full width flex containers.</td>
+                  </tr>
+                  <tr>
+                    <td><code class="inline">loading-text</code></td>
+                    <td><span class="api-badge type">string</span></td>
+                    <td><code class="inline">'Loading...'</code></td>
+                    <td>Label displayed during busy states.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <h3>TypeScript Types</h3>
+            <div class="disclosure-card">
+              <div class="disclosure-title">MButton Types</div>
+              <pre style="font-family: 'Fira Code', monospace; font-size: 13px; color: var(--m-color-text-muted);">
+type MButtonVariant = 'primary' | 'secondary' | 'success' | 'warning' | 'danger' | 'ghost' | 'outline' | 'link';
+type MButtonSize = 'sm' | 'md' | 'lg';
+type MButtonState = 'idle' | 'loading' | 'saving' | 'success' | 'error';
+type MButtonType = 'button' | 'submit' | 'reset';</pre>
+            </div>
+          </div>
+
+          <!-- STYLING TAB CONTENT -->
+          <div class="doc-tabpanel" data-panel="m-button-styling">
+            <h3>CSS Variable Overrides</h3>
+            <p>Customize the element visual parameters at host wrapper levels:</p>
+            <div class="api-table-wrapper">
+              <table class="api-table">
+                <thead>
+                  <tr>
+                    <th>CSS Custom Property</th>
+                    <th>Fallback Reference</th>
+                    <th>Usage Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><code class="inline">--m-button-bg</code></td>
+                    <td><code class="inline">var(--m-color-primary)</code></td>
+                    <td>Controls primary background fill.</td>
+                  </tr>
+                  <tr>
+                    <td><code class="inline">--m-button-border</code></td>
+                    <td><code class="inline">var(--m-color-primary)</code></td>
+                    <td>Controls primary border ring.</td>
+                  </tr>
+                  <tr>
+                    <td><code class="inline">--m-button-color</code></td>
+                    <td><code class="inline">var(--m-color-primary-contrast)</code></td>
+                    <td>Controls button typography color.</td>
+                  </tr>
+                  <tr>
+                    <td><code class="inline">--m-button-hover-bg</code></td>
+                    <td><code class="inline">color-mix(bg, black 10%)</code></td>
+                    <td>Controls background color when hover is active.</td>
+                  </tr>
+                  <tr>
+                    <td><code class="inline">--m-button-shadow</code></td>
+                    <td><code class="inline">0 1px 2px rgba(15,23,42,0.12)</code></td>
+                    <td>Controls shadow dimensions.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- Typography Section -->
+        <section id="m-text" class="doc-section">
+          <div class="component-header">
+            <h1 class="component-title">Text & Typography</h1>
+            <p class="component-desc">Modular typography helper supporting formatting, responsive sizing, truncation, loading skeletons, copy, and gradients.</p>
+          </div>
+
+          <!-- Tab Bar -->
+          <div class="doc-tabmenu" data-target="m-text">
+            <button class="doc-tabmenu-btn active" data-tab="demo">Features</button>
+            <button class="doc-tabmenu-btn" data-tab="api">API</button>
+            <button class="doc-tabmenu-btn" data-tab="styling">Styling</button>
+          </div>
+
+          <!-- DEMO TAB CONTENT -->
+          <div class="doc-tabpanel active" data-panel="m-text-demo">
+            <!-- Typography Presets -->
+            <div class="card-demo">
+              <div class="card-demo-header">
+                <span class="card-demo-title">Typography Presets</span>
+              </div>
+              <div class="card-demo-preview" style="flex-direction: column; align-items: flex-start; gap: 12px;">
+                <m-display>Display Headline (5xl)</m-display>
+                <m-heading>Heading Element (3xl)</m-heading>
+                <m-title>Section Title (xl)</m-title>
+                <m-body>Body narrative text. Clean rendering sizes built with standard leading proportions.</m-body>
+                <m-caption>Caption helper details (sm)</m-caption>
+              </div>
+              <div class="card-demo-actions">
+                <button class="theme-btn source-toggle" title="View Source"><m-icon name="edit" size="sm"></m-icon></button>
+              </div>
+              <div class="card-demo-source">
+                <div class="code-block">
+                  <button class="copy-btn" data-copy='<m-display>Display Headline (5xl)</m-display>
+<m-heading>Heading Element (3xl)</m-heading>
+<m-title>Section Title (xl)</m-title>
+<m-body>Body narrative text...</m-body>
+<m-caption>Caption helper details (sm)</m-caption>'>Copy</button>
+                  <pre><code>&lt;m-display&gt;Display Headline (5xl)&lt;/m-display&gt;
+&lt;m-heading&gt;Heading Element (3xl)&lt;/m-heading&gt;
+&lt;m-title&gt;Section Title (xl)&lt;/m-title&gt;
+&lt;m-body&gt;Body narrative text...&lt;/m-body&gt;
+&lt;m-caption&gt;Caption helper details (sm)&lt;/m-caption&gt;</code></pre>
+                </div>
+              </div>
+            </div>
+
+            <!-- Gradients & Animations -->
+            <div class="card-demo">
+              <div class="card-demo-header">
+                <span class="card-demo-title">Gradients, Glows & Animations</span>
+              </div>
+              <div class="card-demo-preview" style="flex-direction: column; align-items: flex-start; gap: 16px;">
+                <m-heading color="gradient" gradient="sunset" glow>Sunset gradient with Glow</m-heading>
+                <m-heading color="gradient" gradient="ocean">Ocean Gradient Header</m-heading>
+                <m-body animation="pulse" color="primary" weight="semibold">Pulse animation text</m-body>
+                <m-text animation="typing" weight="semibold">Dynamic typing effect animation...</m-text>
+              </div>
+              <div class="card-demo-actions">
+                <button class="theme-btn source-toggle" title="View Source"><m-icon name="edit" size="sm"></m-icon></button>
+              </div>
+              <div class="card-demo-source">
+                <div class="code-block">
+                  <button class="copy-btn" data-copy='<m-heading color="gradient" gradient="sunset" glow>Sunset gradient with Glow</m-heading>
+<m-heading color="gradient" gradient="ocean">Ocean Gradient Header</m-heading>
+<m-body animation="pulse" color="primary" weight="semibold">Pulse animation text</m-body>
+<m-text animation="typing" weight="semibold">Dynamic typing effect animation...</m-text>'>Copy</button>
+                  <pre><code>&lt;m-heading color="gradient" gradient="sunset" glow&gt;Sunset gradient with Glow&lt;/m-heading&gt;
+&lt;m-heading color="gradient" gradient="ocean"&gt;Ocean Gradient Header&lt;/m-heading&gt;
+&lt;m-body animation="pulse" color="primary" weight="semibold"&gt;Pulse animation text&lt;/m-body&gt;
+&lt;m-text animation="typing" weight="semibold"&gt;Dynamic typing effect animation...&lt;/m-text&gt;</code></pre>
+                </div>
+              </div>
+            </div>
+
+            <!-- Formatting & Actions -->
+            <div class="card-demo">
+              <div class="card-demo-header">
+                <span class="card-demo-title">Copyable, Editable & Skeleton Loading</span>
+              </div>
+              <div class="card-demo-preview" style="flex-direction: column; align-items: flex-start; gap: 16px; width: 100%;">
+                <div style="display: flex; align-items: center; gap: 12px; width: 100%;">
+                  <span>Hover to Copy:</span>
+                  <m-text copyable value="Click the icon next to me to copy!"></m-text>
+                </div>
+                <div style="display: flex; align-items: center; gap: 12px; width: 100%;">
+                  <span>Double Click to Edit:</span>
+                  <m-text editable>Double click me to rewrite my inner context.</m-text>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 8px; width: 100%;">
+                  <span>Skeleton placeholder:</span>
+                  <m-text loading></m-text>
+                </div>
+              </div>
+              <div class="card-demo-actions">
+                <button class="theme-btn source-toggle" title="View Source"><m-icon name="edit" size="sm"></m-icon></button>
+              </div>
+              <div class="card-demo-source">
+                <div class="code-block">
+                  <button class="copy-btn" data-copy='<m-text copyable>Hover next to me to copy!</m-text>
+<m-text editable>Click here to rewrite my inner context.</m-text>
+<m-text loading></m-text>'>Copy</button>
+                  <pre><code>&lt;m-text copyable&gt;Hover next to me to copy!&lt;/m-text&gt;
+&lt;m-text editable&gt;Click here to rewrite my inner context.&lt;/m-text&gt;
+&lt;m-text loading&gt;&lt;/m-text&gt;</code></pre>
+                </div>
+              </div>
+            </div>
+
+            <!-- Interactive Playground -->
+            <div class="card-demo">
+              <div class="card-demo-header">
+                <span class="card-demo-title">Interactive Playground</span>
+              </div>
+              <div class="playground">
+                <div class="playground-preview">
+                  <m-text id="txt-preview" size="lg">The quick brown fox jumps over the lazy dog.</m-text>
+                </div>
+                <div class="playground-controls">
+                  <div class="control-group">
+                    <label for="txt-opt-preset">Preset Tag</label>
+                    <select id="txt-opt-preset">
+                      <option value="m-text" selected>m-text</option>
+                      <option value="m-display">m-display</option>
+                      <option value="m-heading">m-heading</option>
+                      <option value="m-title">m-title</option>
+                      <option value="m-body">m-body</option>
+                      <option value="m-caption">m-caption</option>
+                    </select>
+                  </div>
+                  <div class="control-group">
+                    <label for="txt-opt-variant">Variant</label>
+                    <select id="txt-opt-variant">
+                      <option value="body" selected>body</option>
+                      <option value="display">display</option>
+                      <option value="heading">heading</option>
+                      <option value="title">title</option>
+                      <option value="caption">caption</option>
+                    </select>
+                  </div>
+                  <div class="control-group">
+                    <label for="txt-opt-size">Size</label>
+                    <select id="txt-opt-size">
+                      <option value="xs">xs</option>
+                      <option value="sm">sm</option>
+                      <option value="md">md</option>
+                      <option value="lg" selected>lg</option>
+                      <option value="xl">xl</option>
+                      <option value="2xl">2xl</option>
+                      <option value="3xl">3xl</option>
+                      <option value="4xl">4xl</option>
+                      <option value="5xl">5xl</option>
+                      <option value="6xl">6xl</option>
+                    </select>
+                  </div>
+                  <div class="control-group">
+                    <label for="txt-opt-color">Color</label>
+                    <select id="txt-opt-color">
+                      <option value="default" selected>default</option>
+                      <option value="muted">muted</option>
+                      <option value="primary">primary</option>
+                      <option value="success">success</option>
+                      <option value="warning">warning</option>
+                      <option value="danger">danger</option>
+                      <option value="white">white</option>
+                      <option value="gradient">gradient</option>
+                    </select>
+                  </div>
+                  <div class="control-group">
+                    <label for="txt-opt-gradient">Gradient Preset</label>
+                    <select id="txt-opt-gradient" disabled>
+                      <option value="default" selected>default</option>
+                      <option value="primary">primary</option>
+                      <option value="sunset">sunset</option>
+                      <option value="ocean">ocean</option>
+                      <option value="forest">forest</option>
+                      <option value="fire">fire</option>
+                      <option value="royal">royal</option>
+                    </select>
+                  </div>
+                  <div class="control-group">
+                    <label for="txt-opt-weight">Font Weight</label>
+                    <select id="txt-opt-weight">
+                      <option value="light">light</option>
+                      <option value="normal" selected>normal</option>
+                      <option value="medium">medium</option>
+                      <option value="semibold">semibold</option>
+                      <option value="bold">bold</option>
+                      <option value="extrabold">extrabold</option>
+                      <option value="black">black</option>
+                    </select>
+                  </div>
+                  <div class="control-group">
+                    <label for="txt-opt-animation">Animation</label>
+                    <select id="txt-opt-animation">
+                      <option value="none" selected>none</option>
+                      <option value="pulse">pulse</option>
+                      <option value="shimmer">shimmer</option>
+                      <option value="fade">fade</option>
+                      <option value="slide-up">slide-up</option>
+                    </select>
+                  </div>
+                  <div class="control-group">
+                    <label for="txt-opt-content">Text Content</label>
+                    <input type="text" id="txt-opt-content" value="The quick brown fox jumps over the lazy dog." />
+                  </div>
+                  <div class="control-group control-group-checkbox">
+                    <input type="checkbox" id="txt-opt-copyable" />
+                    <label for="txt-opt-copyable">Copyable</label>
+                  </div>
+                  <div class="control-group control-group-checkbox">
+                    <input type="checkbox" id="txt-opt-editable" />
+                    <label for="txt-opt-editable">Editable</label>
+                  </div>
+                  <div class="control-group control-group-checkbox">
+                    <input type="checkbox" id="txt-opt-loading" />
+                    <label for="txt-opt-loading">Skeleton</label>
+                  </div>
+                  <div class="control-group control-group-checkbox">
+                    <input type="checkbox" id="txt-opt-glow" />
+                    <label for="txt-opt-glow">Glow</label>
+                  </div>
+                </div>
+                <div class="playground-code">
+                  <button type="button" class="copy-code-btn" id="txt-copy-code">Copy HTML</button>
+                  <pre><code id="txt-markup-code">&lt;m-text size="lg"&gt;The quick brown fox jumps over the lazy dog.&lt;/m-text&gt;</code></pre>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- API TAB CONTENT -->
+          <div class="doc-tabpanel" data-panel="m-text-api">
+            <div class="card-demo">
+              <div class="card-demo-header">
+                <span class="card-demo-title">Import Statement</span>
+              </div>
+              <div class="code-block">
+                <button class="copy-btn" data-copy='import { MText, MDisplay, MHeading, MTitle, MBody, MCaption } from "@mithra-ui/web";'>Copy</button>
+                <pre><code>import { MText, MDisplay, MHeading, MTitle, MBody, MCaption } from "@mithra-ui/web";</code></pre>
+              </div>
+            </div>
+
+            <h3>Properties</h3>
+            <div class="api-table-wrapper">
+              <table class="api-table">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Type</th>
+                    <th>Default</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><code class="inline">variant</code></td>
+                    <td><span class="api-badge type">MTextVariant</span></td>
+                    <td><code class="inline">'body'</code></td>
+                    <td>Determines typography styling preset details.</td>
+                  </tr>
+                  <tr>
+                    <td><code class="inline">size</code></td>
+                    <td><span class="api-badge type">MTextSize</span></td>
+                    <td><code class="inline">'md'</code></td>
+                    <td>Font scaling bounds.</td>
+                  </tr>
+                  <tr>
+                    <td><code class="inline">color</code></td>
+                    <td><span class="api-badge type">MTextColor</span></td>
+                    <td><code class="inline">'default'</code></td>
+                    <td>Visual style paint color or linear gradient activation.</td>
+                  </tr>
+                  <tr>
+                    <td><code class="inline">weight</code></td>
+                    <td><span class="api-badge type">MTextWeight</span></td>
+                    <td><code class="inline">'normal'</code></td>
+                    <td>Boldness metrics.</td>
+                  </tr>
+                  <tr>
+                    <td><code class="inline">copyable</code></td>
+                    <td><span class="api-badge type">boolean</span></td>
+                    <td><code class="inline">false</code></td>
+                    <td>Displays inline copy action triggers.</td>
+                  </tr>
+                  <tr>
+                    <td><code class="inline">editable</code></td>
+                    <td><span class="api-badge type">boolean</span></td>
+                    <td><code class="inline">false</code></td>
+                    <td>Allows inline content edits.</td>
+                  </tr>
+                  <tr>
+                    <td><code class="inline">format</code></td>
+                    <td><span class="api-badge type">MTextFormat</span></td>
+                    <td><code class="inline">null</code></td>
+                    <td>Triggers numerical date formatting engines.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <h3>TypeScript Types</h3>
+            <div class="disclosure-card">
+              <div class="disclosure-title">MText Types</div>
+              <pre style="font-family: 'Fira Code', monospace; font-size: 13px; color: var(--m-color-text-muted);">
+type MTextVariant = 'display' | 'heading' | 'title' | 'body' | 'caption' | 'overline';
+type MTextSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl' | '5xl' | '6xl';
+type MTextColor = 'default' | 'muted' | 'primary' | 'secondary' | 'success' | 'warning' | 'danger' | 'info' | 'white' | 'gradient';
+type MTextWeight = 'light' | 'normal' | 'medium' | 'semibold' | 'bold' | 'extrabold';
+type MTextGradient = 'default' | 'primary' | 'sunset' | 'ocean' | 'forest' | 'fire' | 'royal';
+type MTextAnimation = 'none' | 'pulse' | 'shimmer' | 'fade' | 'slide-up' | 'typing';
+type MTextFormat = 'currency' | 'percent' | 'compact' | 'date' | 'relative';</pre>
+            </div>
+          </div>
+
+          <!-- STYLING TAB CONTENT -->
+          <div class="doc-tabpanel" data-panel="m-text-styling">
+            <h3>CSS Variable Overrides</h3>
+            <p>Alter the following styling hooks inside custom CSS contexts:</p>
+            <div class="api-table-wrapper">
+              <table class="api-table">
+                <thead>
+                  <tr>
+                    <th>CSS Custom Property</th>
+                    <th>Fallback Reference</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><code class="inline">--m-text-color</code></td>
+                    <td><code class="inline">var(--m-color-text)</code></td>
+                    <td>Controls inline ink text paint.</td>
+                  </tr>
+                  <tr>
+                    <td><code class="inline">--m-text-family</code></td>
+                    <td><code class="inline">var(--m-font-sans)</code></td>
+                    <td>Controls custom font family configurations.</td>
+                  </tr>
+                  <tr>
+                    <td><code class="inline">--m-text-size</code></td>
+                    <td><code class="inline">var(--m-text-md)</code></td>
+                    <td>Custom font sizes.</td>
+                  </tr>
+                  <tr>
+                    <td><code class="inline">--m-text-weight</code></td>
+                    <td><code class="inline">var(--m-font-normal)</code></td>
+                    <td>Custom font weight overrides.</td>
+                  </tr>
+                  <tr>
+                    <td><code class="inline">--m-text-lines</code></td>
+                    <td><code class="inline">2</code></td>
+                    <td>Controls lines clamp clamp metrics.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- Icon Section -->
+        <section id="m-icon" class="doc-section">
+          <div class="component-header">
+            <h1 class="component-title">Icon</h1>
+            <p class="component-desc">dynamic outline nodes mapping to Tabler Icons.</p>
+          </div>
+
+          <!-- Tab Bar -->
+          <div class="doc-tabmenu" data-target="m-icon">
+            <button class="doc-tabmenu-btn active" data-tab="demo">Features</button>
+            <button class="doc-tabmenu-btn" data-tab="api">API</button>
+            <button class="doc-tabmenu-btn" data-tab="styling">Styling</button>
+          </div>
+
+          <!-- DEMO TAB CONTENT -->
+          <div class="doc-tabpanel active" data-panel="m-icon-demo">
+            <!-- Icon attributes showcase -->
+            <div class="card-demo">
+              <div class="card-demo-header">
+                <span class="card-demo-title">Sizes & Color Variants</span>
+              </div>
+              <div class="card-demo-preview">
+                <m-icon name="heart" size="xs" color="danger"></m-icon>
+                <m-icon name="heart" size="sm" color="warning"></m-icon>
+                <m-icon name="heart" size="md" color="success"></m-icon>
+                <m-icon name="heart" size="lg" color="primary"></m-icon>
+                <m-icon name="heart" size="xl" color="primary"></m-icon>
+              </div>
+              <div class="card-demo-actions">
+                <button class="theme-btn source-toggle" title="View Source"><m-icon name="edit" size="sm"></m-icon></button>
+              </div>
+              <div class="card-demo-source">
+                <div class="code-block">
+                  <button class="copy-btn" data-copy='<m-icon name="heart" size="xs" color="danger"></m-icon>
+<m-icon name="heart" size="sm" color="warning"></m-icon>
+<m-icon name="heart" size="md" color="success"></m-icon>
+<m-icon name="heart" size="lg" color="primary"></m-icon>
+<m-icon name="heart" size="xl" color="primary"></m-icon>'>Copy</button>
+                  <pre><code>&lt;m-icon name="heart" size="xs" color="danger"&gt;&lt;/m-icon&gt;
+&lt;m-icon name="heart" size="sm" color="warning"&gt;&lt;/m-icon&gt;
+&lt;m-icon name="heart" size="md" color="success"&gt;&lt;/m-icon&gt;
+&lt;m-icon name="heart" size="lg" color="primary"&gt;&lt;/m-icon&gt;
+&lt;m-icon name="heart" size="xl" color="primary"&gt;&lt;/m-icon&gt;</code></pre>
+                </div>
+              </div>
+            </div>
+
+            <!-- Interactive Playground -->
+            <div class="card-demo">
+              <div class="card-demo-header">
+                <span class="card-demo-title">Interactive Playground</span>
+              </div>
+              <div class="playground">
+                <div class="playground-preview">
+                  <m-icon id="icon-preview" name="star" size="xl" color="primary" stroke-width="2"></m-icon>
+                </div>
+                <div class="playground-controls">
+                  <div class="control-group">
+                    <label for="icon-opt-name">Icon Name</label>
+                    <select id="icon-opt-name">
+                      <option value="star" selected>star</option>
+                      <option value="heart">heart</option>
+                      <option value="settings">settings</option>
+                      <option value="check">check</option>
+                      <option value="alert-triangle">alert-triangle</option>
+                      <option value="device-floppy">device-floppy</option>
+                      <option value="loader-2">loader-2</option>
+                      <option value="user">user</option>
+                      <option value="mail">mail</option>
+                      <option value="brand-github">brand-github</option>
+                      <option value="trash">trash</option>
+                      <option value="share">share</option>
+                      <option value="sun">sun</option>
+                      <option value="moon">moon</option>
+                      <option value="arrow-right">arrow-right</option>
+                      <option value="external-link">external-link</option>
+                    </select>
+                  </div>
+                  <div class="control-group">
+                    <label for="icon-opt-size">Size</label>
+                    <select id="icon-opt-size">
+                      <option value="xs">xs</option>
+                      <option value="sm">sm</option>
+                      <option value="md">md</option>
+                      <option value="lg">lg</option>
+                      <option value="xl" selected>xl</option>
+                    </select>
+                  </div>
+                  <div class="control-group">
+                    <label for="icon-opt-color">Color</label>
+                    <select id="icon-opt-color">
+                      <option value="default">default</option>
+                      <option value="muted">muted</option>
+                      <option value="primary" selected>primary</option>
+                      <option value="success">success</option>
+                      <option value="warning">warning</option>
+                      <option value="danger">danger</option>
+                      <option value="current">current</option>
+                    </select>
+                  </div>
+                  <div class="control-group">
+                    <label for="icon-opt-stroke">Stroke Width</label>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                      <input type="range" id="icon-opt-stroke" min="1" max="4" step="0.5" value="2" style="flex: 1; accent-color: var(--m-color-primary);" />
+                      <code class="inline" id="val-stroke" style="min-width: 32px; text-align: center;">2</code>
+                    </div>
+                  </div>
+                </div>
+                <div class="playground-code">
+                  <button type="button" class="copy-code-btn" id="icon-copy-code">Copy HTML</button>
+                  <pre><code id="icon-markup-code">&lt;m-icon name="star" size="xl" color="primary" stroke-width="2"&gt;&lt;/m-icon&gt;</code></pre>
+                </div>
+              </div>
+            </div>
+
+            <!-- Icon Catalogue -->
+            <div class="card-demo">
+              <div class="card-demo-header">
+                <span class="card-demo-title">Icon Catalogue (Click to copy)</span>
+              </div>
+              <div style="padding: 20px;">
+                <p>Click any icon below to copy its HTML tag automatically to your clipboard.</p>
+                <div class="icon-showcase-grid" id="icon-showcase-grid"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- API TAB CONTENT -->
+          <div class="doc-tabpanel" data-panel="m-icon-api">
+            <div class="card-demo">
+              <div class="card-demo-header">
+                <span class="card-demo-title">Import Statement</span>
+              </div>
+              <div class="code-block">
+                <button class="copy-btn" data-copy='import { MIcon } from "@mithra-ui/web";'>Copy</button>
+                <pre><code>import { MIcon } from "@mithra-ui/web";</code></pre>
+              </div>
+            </div>
+
+            <h3>Properties</h3>
+            <div class="api-table-wrapper">
+              <table class="api-table">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Type</th>
+                    <th>Default</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><code class="inline">name</code></td>
+                    <td><span class="api-badge type">string</span></td>
+                    <td><code class="inline">''</code></td>
+                    <td>Identifies which Tabler vector symbol to render.</td>
+                  </tr>
+                  <tr>
+                    <td><code class="inline">size</code></td>
+                    <td><span class="api-badge type">MIconSize</span></td>
+                    <td><code class="inline">'md'</code></td>
+                    <td>Size bounds scale parameter.</td>
+                  </tr>
+                  <tr>
+                    <td><code class="inline">color</code></td>
+                    <td><span class="api-badge type">MIconColor</span></td>
+                    <td><code class="inline">'current'</code></td>
+                    <td>Paint fill color parameter.</td>
+                  </tr>
+                  <tr>
+                    <td><code class="inline">stroke-width</code></td>
+                    <td><span class="api-badge type">string | number</span></td>
+                    <td><code class="inline">2</code></td>
+                    <td>Outlines thickness parameter.</td>
+                  </tr>
+                  <tr>
+                    <td><code class="inline">label</code></td>
+                    <td><span class="api-badge type">string</span></td>
+                    <td><code class="inline">null</code></td>
+                    <td>Adds accessible description attribute elements.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <h3>TypeScript Types</h3>
+            <div class="disclosure-card">
+              <div class="disclosure-title">MIcon Types</div>
+              <pre style="font-family: 'Fira Code', monospace; font-size: 13px; color: var(--m-color-text-muted);">
+type MIconSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+type MIconColor = 'default' | 'muted' | 'primary' | 'success' | 'warning' | 'danger' | 'current';</pre>
+            </div>
+          </div>
+
+          <!-- STYLING TAB CONTENT -->
+          <div class="doc-tabpanel" data-panel="m-icon-styling">
+            <h3>CSS Variable Overrides</h3>
+            <div class="api-table-wrapper">
+              <table class="api-table">
+                <thead>
+                  <tr>
+                    <th>CSS Custom Property</th>
+                    <th>Fallback Reference</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><code class="inline">--m-icon-size-value</code></td>
+                    <td><code class="inline">1em</code></td>
+                    <td>Explicit width/height constraints mapped to size attributes.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+      </main>
+    </div>
+
+    <!-- Script Implementations -->
     <script type="module">
       import { applyTheme, register } from "../../packages/web/dist/mithra-ui-web.js";
 
+      // Register custom elements globally
       register();
 
-      document.querySelectorAll("[data-theme]").forEach((button) => {
-        button.addEventListener("click", () => {
-          applyTheme({ theme: button.dataset.theme });
+      // Configure dates dynamically to match current date
+      const now = new Date();
+      const pastTime = new Date(now.getTime() - 1000 * 60 * 15);
+      const futureTime = new Date(now.getTime() + 1000 * 60 * 60 * 3.5);
+      
+      const elPast = document.getElementById("rel-time-past");
+      const elFuture = document.getElementById("rel-time-future");
+      if (elPast) elPast.setAttribute("value", pastTime.toISOString());
+      if (elFuture) elFuture.setAttribute("value", futureTime.toISOString());
+
+      /* ----------------------------------------------------
+         UI CONTROLLERS: Navigation & Responsive Sidebar
+         ---------------------------------------------------- */
+      const sidebarLinks = document.querySelectorAll(".sidebar-nav a");
+      const sections = document.querySelectorAll(".doc-section");
+      const mobileMenuBtn = document.getElementById("btn-mobile-menu");
+      const sidebar = document.getElementById("doc-sidebar");
+      const backdrop = document.getElementById("sidebar-backdrop");
+
+      function switchSection(hash) {
+        const targetId = hash.replace("#", "") || "introduction";
+        let targetSection = document.getElementById(targetId);
+
+        if (!targetSection) return;
+
+        sections.forEach(sec => sec.classList.remove("active"));
+        sidebarLinks.forEach(link => {
+          link.classList.remove("active");
+          if (link.getAttribute("href") === `#${targetId}`) {
+            link.classList.add("active");
+          }
+        });
+
+        targetSection.classList.add("active");
+        document.getElementById("doc-content").scrollTop = 0;
+
+        // Reset sub-tabs to active first when switching component pages
+        const tabmenu = targetSection.querySelector(".doc-tabmenu");
+        if (tabmenu) {
+          const firstTabBtn = tabmenu.querySelector(".doc-tabmenu-btn");
+          if (firstTabBtn) firstTabBtn.click();
+        }
+
+        // Close sidebar menu in mobile drawer context
+        sidebar.classList.remove("active");
+        backdrop.classList.remove("active");
+        const icon = mobileMenuBtn.querySelector("m-icon");
+        if (icon) icon.setAttribute("name", "menu-2");
+      }
+
+      window.addEventListener("hashchange", () => {
+        switchSection(window.location.hash);
+      });
+
+      if (window.location.hash) {
+        switchSection(window.location.hash);
+      } else {
+        switchSection("#introduction");
+      }
+
+      mobileMenuBtn.addEventListener("click", () => {
+        const isActive = sidebar.classList.toggle("active");
+        backdrop.classList.toggle("active", isActive);
+        const icon = mobileMenuBtn.querySelector("m-icon");
+        if (icon) icon.setAttribute("name", isActive ? "x" : "menu-2");
+      });
+
+      backdrop.addEventListener("click", () => {
+        sidebar.classList.remove("active");
+        backdrop.classList.remove("active");
+        const icon = mobileMenuBtn.querySelector("m-icon");
+        if (icon) icon.setAttribute("name", "menu-2");
+      });
+
+      /* ----------------------------------------------------
+         UI CONTROLLERS: Sub-tab Menu Switcher (PrimeNG Style)
+         ---------------------------------------------------- */
+      document.querySelectorAll(".doc-tabmenu").forEach(menu => {
+        const targetComponent = menu.dataset.target;
+        const buttons = menu.querySelectorAll(".doc-tabmenu-btn");
+        
+        buttons.forEach(btn => {
+          btn.addEventListener("click", () => {
+            buttons.forEach(b => b.classList.remove("active"));
+            btn.classList.add("active");
+            
+            const selectedTab = btn.dataset.tab;
+            
+            // Hide all matching panels
+            document.querySelectorAll(`div[data-panel^="${targetComponent}-"]`).forEach(panel => {
+              panel.classList.remove("active");
+            });
+            
+            // Show target panel
+            const targetPanel = document.querySelector(`div[data-panel="${targetComponent}-${selectedTab}"]`);
+            if (targetPanel) targetPanel.classList.add("active");
+          });
         });
       });
 
-      document.querySelectorAll("[data-direction]").forEach((button) => {
-        button.addEventListener("click", () => {
-          applyTheme({ direction: button.dataset.direction });
+      // Expandable Source Code Panels
+      document.querySelectorAll(".source-toggle").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const card = btn.closest(".card-demo");
+          const sourceContainer = card.querySelector(".card-demo-source");
+          
+          if (sourceContainer) {
+            sourceContainer.classList.toggle("active");
+            const icon = btn.querySelector("m-icon");
+            if (icon) {
+              const isActive = sourceContainer.classList.contains("active");
+              icon.setAttribute("name", isActive ? "x" : "edit");
+            }
+          }
         });
       });
+
+      /* ----------------------------------------------------
+         GLOBAL CONTROLLERS: Theme Customizer
+         ---------------------------------------------------- */
+      const root = document.documentElement;
+      
+      const pickPrimary = document.getElementById("theme-primary");
+      const pickBg = document.getElementById("theme-bg");
+      const pickSurface = document.getElementById("theme-surface");
+      const pickText = document.getElementById("theme-text");
+      const pickBorder = document.getElementById("theme-border");
+      const slideRadius = document.getElementById("theme-radius");
+      
+      const valPrimary = document.getElementById("val-primary");
+      const valBg = document.getElementById("val-bg");
+      const valSurface = document.getElementById("val-surface");
+      const valText = document.getElementById("val-text");
+      const valBorder = document.getElementById("val-border");
+      const valRadius = document.getElementById("val-radius");
+      
+      const btnReset = document.getElementById("btn-theme-reset");
+
+      function syncColorPickers() {
+        const style = getComputedStyle(root);
+        const hexPrimary = style.getPropertyValue("--m-color-primary").trim();
+        const hexBg = style.getPropertyValue("--m-color-background").trim();
+        const hexSurface = style.getPropertyValue("--m-color-surface").trim();
+        const hexText = style.getPropertyValue("--m-color-text").trim();
+        const hexBorder = style.getPropertyValue("--m-color-border").trim();
+        
+        if (hexPrimary.startsWith("#")) {
+          pickPrimary.value = hexPrimary;
+          valPrimary.textContent = hexPrimary;
+        }
+        if (hexBg.startsWith("#")) {
+          pickBg.value = hexBg;
+          valBg.textContent = hexBg;
+        }
+        if (hexSurface.startsWith("#")) {
+          pickSurface.value = hexSurface;
+          valSurface.textContent = hexSurface;
+        }
+        if (hexText.startsWith("#")) {
+          pickText.value = hexText;
+          valText.textContent = hexText;
+        }
+        if (hexBorder.startsWith("#")) {
+          pickBorder.value = hexBorder;
+          valBorder.textContent = hexBorder;
+        }
+      }
+
+      pickPrimary.addEventListener("input", (e) => {
+        const color = e.target.value;
+        root.style.setProperty("--m-color-primary", color);
+        root.style.setProperty("--m-color-focus-ring", `${color}80`);
+        valPrimary.textContent = color;
+      });
+
+      pickBg.addEventListener("input", (e) => {
+        root.style.setProperty("--m-color-background", e.target.value);
+        valBg.textContent = e.target.value;
+      });
+
+      pickSurface.addEventListener("input", (e) => {
+        root.style.setProperty("--m-color-surface", e.target.value);
+        valSurface.textContent = e.target.value;
+      });
+
+      pickText.addEventListener("input", (e) => {
+        root.style.setProperty("--m-color-text", e.target.value);
+        valText.textContent = e.target.value;
+      });
+
+      pickBorder.addEventListener("input", (e) => {
+        root.style.setProperty("--m-color-border", e.target.value);
+        valBorder.textContent = e.target.value;
+      });
+
+      slideRadius.addEventListener("input", (e) => {
+        const val = `${e.target.value}px`;
+        root.style.setProperty("--m-radius-lg", val);
+        root.style.setProperty("--m-radius-md", `${Math.max(4, e.target.value - 4)}px`);
+        valRadius.textContent = val;
+      });
+
+      btnReset.addEventListener("click", () => {
+        root.style.removeProperty("--m-color-primary");
+        root.style.removeProperty("--m-color-focus-ring");
+        root.style.removeProperty("--m-color-background");
+        root.style.removeProperty("--m-color-surface");
+        root.style.removeProperty("--m-color-text");
+        root.style.removeProperty("--m-color-border");
+        root.style.removeProperty("--m-radius-lg");
+        root.style.removeProperty("--m-radius-md");
+        
+        syncColorPickers();
+        slideRadius.value = 12;
+        valRadius.textContent = "12px";
+        showToast("CSS Custom parameters reset!");
+      });
+
+      setTimeout(syncColorPickers, 300);
+
+      /* ----------------------------------------------------
+         GLOBAL CONTROLLERS: Theme Toggler & Direction
+         ---------------------------------------------------- */
+      const btnTheme = document.getElementById("btn-theme-toggle");
+      const btnDir = document.getElementById("btn-dir-toggle");
+
+      let currentTheme = localStorage.getItem("mithra-doc-theme") || "system";
+      
+      function updateThemeUI(theme) {
+        applyTheme({ theme });
+        localStorage.setItem("mithra-doc-theme", theme);
+        const icon = btnTheme.querySelector("m-icon");
+        
+        if (theme === "dark") {
+          icon.setAttribute("name", "moon");
+        } else if (theme === "light") {
+          icon.setAttribute("name", "sun");
+        } else {
+          const isDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+          icon.setAttribute("name", isDark ? "moon" : "sun");
+        }
+        
+        setTimeout(syncColorPickers, 100);
+      }
+
+      btnTheme.addEventListener("click", () => {
+        if (currentTheme === "system") currentTheme = "light";
+        else if (currentTheme === "light") currentTheme = "dark";
+        else currentTheme = "system";
+        updateThemeUI(currentTheme);
+        showToast(`Theme switched to: ${currentTheme}`);
+      });
+
+      updateThemeUI(currentTheme);
+
+      let currentDir = "ltr";
+      btnDir.addEventListener("click", () => {
+        currentDir = currentDir === "ltr" ? "rtl" : "ltr";
+        applyTheme({ direction: currentDir });
+        btnDir.querySelector("span").textContent = currentDir.toUpperCase();
+        showToast(`Direction toggled to: ${currentDir.toUpperCase()}`);
+      });
+
+      /* ----------------------------------------------------
+         TOAST & COPY CLIPBOARD SYSTEM
+         ---------------------------------------------------- */
+      const toast = document.getElementById("toast");
+      const toastMsg = document.getElementById("toast-message");
+      let toastTimeout;
+
+      function showToast(message) {
+        clearTimeout(toastTimeout);
+        toastMsg.textContent = message;
+        toast.classList.add("show");
+        toastTimeout = setTimeout(() => {
+          toast.classList.remove("show");
+        }, 2500);
+      }
+
+      document.body.addEventListener("click", (e) => {
+        const copyBtn = e.target.closest(".copy-btn");
+        if (copyBtn) {
+          const text = copyBtn.dataset.copy;
+          navigator.clipboard.writeText(text).then(() => {
+            showToast("Copied to clipboard!");
+          });
+        }
+      });
+
+      /* ----------------------------------------------------
+         SEARCH BOX FILTERS
+         ---------------------------------------------------- */
+      const searchInput = document.getElementById("search-input");
+      searchInput.addEventListener("input", (e) => {
+        const query = e.target.value.toLowerCase().trim();
+        
+        document.querySelectorAll(".sidebar-nav a").forEach(link => {
+          const text = link.textContent.toLowerCase();
+          const li = link.closest("li");
+          
+          if (text.includes(query)) {
+            li.style.display = "";
+          } else {
+            li.style.display = "none";
+          }
+        });
+
+        document.querySelectorAll(".sidebar-section").forEach(sec => {
+          const visible = Array.from(sec.querySelectorAll(".sidebar-nav li")).some(li => li.style.display !== "none");
+          sec.style.display = visible ? "" : "none";
+        });
+      });
+
+      /* ----------------------------------------------------
+         PLAYGROUND: Button Component
+         ---------------------------------------------------- */
+      const btnPreview = document.getElementById("btn-preview");
+      const btnMarkup = document.getElementById("btn-markup-code");
+      const btnCopy = document.getElementById("btn-copy-code");
+
+      const optBtnVariant = document.getElementById("btn-opt-variant");
+      const optBtnSize = document.getElementById("btn-opt-size");
+      const optBtnState = document.getElementById("btn-opt-state");
+      const optBtnText = document.getElementById("btn-opt-text");
+      const optBtnLoadingText = document.getElementById("btn-opt-loading-text");
+      const optBtnSuccessText = document.getElementById("btn-opt-success-text");
+      const optBtnDisabled = document.getElementById("btn-opt-disabled");
+      const optBtnRounded = document.getElementById("btn-opt-rounded");
+      const optBtnBlock = document.getElementById("btn-opt-block");
+
+      function updateButtonPlayground() {
+        const variant = optBtnVariant.value;
+        const size = optBtnSize.value;
+        const state = optBtnState.value;
+        const text = optBtnText.value;
+        const loadText = optBtnLoadingText.value;
+        const successText = optBtnSuccessText.value;
+        const isDisabled = optBtnDisabled.checked;
+        const isRounded = optBtnRounded.checked;
+        const isBlock = optBtnBlock.checked;
+
+        btnPreview.setAttribute("variant", variant);
+        btnPreview.setAttribute("size", size);
+        btnPreview.setAttribute("state", state);
+        btnPreview.textContent = text;
+        
+        if (loadText) btnPreview.setAttribute("loading-text", loadText);
+        else btnPreview.removeAttribute("loading-text");
+        
+        if (successText) btnPreview.setAttribute("success-text", successText);
+        else btnPreview.removeAttribute("success-text");
+
+        if (isDisabled) btnPreview.setAttribute("disabled", "");
+        else btnPreview.removeAttribute("disabled");
+
+        if (isRounded) btnPreview.setAttribute("rounded", "");
+        else btnPreview.removeAttribute("rounded");
+
+        if (isBlock) btnPreview.setAttribute("block", "");
+        else btnPreview.removeAttribute("block");
+
+        let markup = `<m-button variant="${variant}" size="${size}"`;
+        if (state !== "idle") markup += ` state="${state}"`;
+        if (loadText && loadText !== "Loading...") markup += ` loading-text="${loadText}"`;
+        if (successText && successText !== "Saved") markup += ` success-text="${successText}"`;
+        if (isDisabled) markup += " disabled";
+        if (isRounded) markup += " rounded";
+        if (isBlock) markup += " block";
+        markup += `>${text}</m-button>`;
+
+        btnMarkup.textContent = markup;
+      }
+
+      [optBtnVariant, optBtnSize, optBtnState, optBtnDisabled, optBtnRounded, optBtnBlock].forEach(el => {
+        el.addEventListener("change", updateButtonPlayground);
+      });
+      [optBtnText, optBtnLoadingText, optBtnSuccessText].forEach(el => {
+        el.addEventListener("input", updateButtonPlayground);
+      });
+
+      btnCopy.addEventListener("click", () => {
+        navigator.clipboard.writeText(btnMarkup.textContent).then(() => {
+          showToast("Button HTML copied!");
+        });
+      });
+
+      updateButtonPlayground();
+
+      /* ----------------------------------------------------
+         PLAYGROUND: Text / Typography Component
+         ---------------------------------------------------- */
+      const txtPreviewWrapper = document.querySelector("#m-text .playground-preview");
+      const txtMarkup = document.getElementById("txt-markup-code");
+      const txtCopy = document.getElementById("txt-copy-code");
+
+      const optTxtPreset = document.getElementById("txt-opt-preset");
+      const optTxtVariant = document.getElementById("txt-opt-variant");
+      const optTxtSize = document.getElementById("txt-opt-size");
+      const optTxtColor = document.getElementById("txt-opt-color");
+      const optTxtGradient = document.getElementById("txt-opt-gradient");
+      const optTxtWeight = document.getElementById("txt-opt-weight");
+      const optTxtAnimation = document.getElementById("txt-opt-animation");
+      const optTxtContent = document.getElementById("txt-opt-content");
+      const optTxtCopyable = document.getElementById("txt-opt-copyable");
+      const optTxtEditable = document.getElementById("txt-opt-editable");
+      const optTxtLoading = document.getElementById("txt-opt-loading");
+      const optTxtGlow = document.getElementById("txt-opt-glow");
+
+      optTxtColor.addEventListener("change", () => {
+        optTxtGradient.disabled = optTxtColor.value !== "gradient";
+      });
+
+      function updateTextPlayground() {
+        const preset = optTxtPreset.value;
+        const variant = optTxtVariant.value;
+        const size = optTxtSize.value;
+        const color = optTxtColor.value;
+        const grad = optTxtGradient.value;
+        const weight = optTxtWeight.value;
+        const animation = optTxtAnimation.value;
+        const content = optTxtContent.value;
+        const isCopyable = optTxtCopyable.checked;
+        const isEditable = optTxtEditable.checked;
+        const isLoading = optTxtLoading.checked;
+        const isGlow = optTxtGlow.checked;
+
+        txtPreviewWrapper.innerHTML = "";
+        const el = document.createElement(preset);
+        el.id = "txt-preview";
+        el.textContent = content;
+
+        el.setAttribute("variant", variant);
+        el.setAttribute("size", size);
+        el.setAttribute("color", color);
+        el.setAttribute("weight", weight);
+        el.setAttribute("animation", animation);
+
+        if (color === "gradient") {
+          el.setAttribute("gradient", grad);
+        }
+        if (isCopyable) el.setAttribute("copyable", "");
+        if (isEditable) el.setAttribute("editable", "");
+        if (isLoading) el.setAttribute("loading", "");
+        if (isGlow) el.setAttribute("glow", "");
+
+        txtPreviewWrapper.appendChild(el);
+
+        let markup = `<${preset} variant="${variant}" size="${size}" color="${color}" weight="${weight}"`;
+        if (color === "gradient") markup += ` gradient="${grad}"`;
+        if (animation !== "none") markup += ` animation="${animation}"`;
+        if (isCopyable) markup += " copyable";
+        if (isEditable) markup += " editable";
+        if (isLoading) markup += " loading";
+        if (isGlow) markup += " glow";
+        markup += `>${content}</${preset}>`;
+
+        txtMarkup.textContent = markup;
+      }
+
+      [optTxtPreset, optTxtVariant, optTxtSize, optTxtColor, optTxtGradient, optTxtWeight, optTxtAnimation, optTxtCopyable, optTxtEditable, optTxtLoading, optTxtGlow].forEach(el => {
+        el.addEventListener("change", updateTextPlayground);
+      });
+      optTxtContent.addEventListener("input", updateTextPlayground);
+
+      txtCopy.addEventListener("click", () => {
+        navigator.clipboard.writeText(txtMarkup.textContent).then(() => {
+          showToast("Typography HTML copied!");
+        });
+      });
+
+      updateTextPlayground();
+
+      /* ----------------------------------------------------
+         PLAYGROUND: Icon Component
+         ---------------------------------------------------- */
+      const iconPreview = document.getElementById("icon-preview");
+      const iconMarkup = document.getElementById("icon-markup-code");
+      const iconCopy = document.getElementById("icon-copy-code");
+
+      const optIconName = document.getElementById("icon-opt-name");
+      const optIconSize = document.getElementById("icon-opt-size");
+      const optIconColor = document.getElementById("icon-opt-color");
+      const optIconStroke = document.getElementById("icon-opt-stroke");
+      const valStroke = document.getElementById("val-stroke");
+
+      function updateIconPlayground() {
+        const name = optIconName.value;
+        const size = optIconSize.value;
+        const color = optIconColor.value;
+        const stroke = optIconStroke.value;
+
+        iconPreview.setAttribute("name", name);
+        iconPreview.setAttribute("size", size);
+        iconPreview.setAttribute("color", color);
+        iconPreview.setAttribute("stroke-width", stroke);
+        valStroke.textContent = stroke;
+
+        const markup = `<m-icon name="${name}" size="${size}" color="${color}" stroke-width="${stroke}"></m-icon>`;
+        iconMarkup.textContent = markup;
+      }
+
+      [optIconName, optIconSize, optIconColor, optIconStroke].forEach(el => {
+        el.addEventListener("change", updateIconPlayground);
+      });
+      optIconStroke.addEventListener("input", updateIconPlayground);
+
+      iconCopy.addEventListener("click", () => {
+        navigator.clipboard.writeText(iconMarkup.textContent).then(() => {
+          showToast("Icon HTML copied!");
+        });
+      });
+
+      updateIconPlayground();
+
+      // Populate Icon Grid
+      const showcaseIcons = [
+        "star", "heart", "settings", "check", "alert-triangle", "device-floppy",
+        "loader-2", "user", "mail", "brand-github", "trash", "share",
+        "sun", "moon", "arrow-right", "external-link", "copy", "x", "menu-2",
+        "bell", "calendar", "camera", "cloud", "edit", "folder",
+        "info-circle", "lock", "map-pin", "phone", "search", "upload"
+      ];
+      
+      const grid = document.getElementById("icon-showcase-grid");
+      showcaseIcons.forEach(iconName => {
+        const item = document.createElement("div");
+        item.className = "icon-showcase-item";
+        item.innerHTML = `
+          <m-icon name="${iconName}" size="lg"></m-icon>
+          <span class="icon-showcase-name">${iconName}</span>
+        `;
+        
+        item.addEventListener("click", () => {
+          optIconName.value = iconName;
+          updateIconPlayground();
+          
+          const markup = `<m-icon name="${iconName}" size="md"></m-icon>`;
+          navigator.clipboard.writeText(markup).then(() => {
+            showToast(`Copied <m-icon name="${iconName}"> tag!`);
+          });
+        });
+        
+        grid.appendChild(item);
+      });
+      
     </script>
   </body>
 </html>
